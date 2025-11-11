@@ -40,7 +40,7 @@ export async function setupVite(app: Express, server: Server) {
     },
   });
 
-  // nutze Vite-Middleware
+  // Vite Middleware verwenden
   app.use(vite.middlewares);
 
   app.use("*", async (req, res, next) => {
@@ -70,7 +70,7 @@ export async function setupVite(app: Express, server: Server) {
  * Production mode — serve built files
  */
 export function serveStatic(app: Express) {
-  const distPath = path.resolve(import.meta.dirname, "..", "dist"); // 👈 statt "public"
+  const distPath = path.resolve(import.meta.dirname, "..", "dist"); // build output
 
   if (!fs.existsSync(distPath)) {
     throw new Error(`Build directory not found: ${distPath}`);
@@ -78,14 +78,7 @@ export function serveStatic(app: Express) {
 
   app.use(express.static(distPath));
 
-  app.use("*", (_req, res) => {
-    res.sendFile(path.join(distPath, "index.html"));
-  });
-}
-
-  app.use(express.static(distPath));
-
-  // alle unbekannten Routen auf index.html weiterleiten (SPA support)
+  // SPA: alle unbekannten Routen auf index.html weiterleiten
   app.use("*", (_req, res) => {
     res.sendFile(path.join(distPath, "index.html"));
   });
