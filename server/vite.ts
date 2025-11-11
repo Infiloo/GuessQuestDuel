@@ -70,14 +70,18 @@ export async function setupVite(app: Express, server: Server) {
  * Production mode — serve built files
  */
 export function serveStatic(app: Express) {
-  // Wichtig: dist enthält den gebauten Client
-  const distPath = path.resolve(import.meta.dirname, "..", "dist");
+  const distPath = path.resolve(import.meta.dirname, "..", "dist"); // 👈 statt "public"
 
   if (!fs.existsSync(distPath)) {
-    throw new Error(
-      `❌ Build directory not found: ${distPath}\n→ Bitte zuerst "npm run build" ausführen.`
-    );
+    throw new Error(`Build directory not found: ${distPath}`);
   }
+
+  app.use(express.static(distPath));
+
+  app.use("*", (_req, res) => {
+    res.sendFile(path.join(distPath, "index.html"));
+  });
+}
 
   app.use(express.static(distPath));
 
